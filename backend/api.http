@@ -1,0 +1,11 @@
+### Test Analyze API
+POST http://localhost:5000/analyze
+Content-Type: application/json
+
+{
+  "code": "for i in range(5): print(i)",
+  "use_ai": true
+}
+
+### Test Health API
+GET http://localhost:5000/health

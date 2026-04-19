@@ -7,6 +7,7 @@ from config import Config
 
 from routes.health import health_bp
 
+from routes.analyze import analyze_bp
 def create_app():
     app=Flask(__name__)
     app.config.from_object(Config)  #Reads all UPPERCASE attributes from your Config class
@@ -15,6 +16,8 @@ def create_app():
     
     #register blueprints
     app.register_blueprint(health_bp)
+    
+    app.register_blueprint(analyze_bp)
     
     return app
 
