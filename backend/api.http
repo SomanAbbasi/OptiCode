@@ -12,5 +12,12 @@ Content-Type: application/json
   "language": "python"
 }
 
+### Analyze: Model Response
+POST {{baseUrl}}/analyze
+Content-Type: application/json
 
+{
+  "code": "def foo(\n    print('broken'",
+  "language": "python"
+}
 

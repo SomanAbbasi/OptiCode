@@ -4,12 +4,15 @@ from config import Config
 from app.services.openrouter_service import callLLM
 from app.prompts.system_prompt import OPTICODE_SYSTEM_PROMPT
 from app.utils.validators import validate_analyze_request
-
+from app.routes.analyze import analyze_bp
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+     # Register Blueprints 
+    app.register_blueprint(analyze_bp)
+    
     @app.route("/health", methods=["GET"])
     def health():
         return {"status": "ok", "service": "OptiCode Backend"}, 200
