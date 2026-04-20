@@ -1,11 +1,16 @@
-### Test Analyze API
-POST http://localhost:5000/analyze
+@baseUrl = http://localhost:5000
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Analyze: Lanugae Validation
+POST {{baseUrl}}/test-validator
 Content-Type: application/json
 
 {
-  "code": "for i in range(5): print(i)",
-  "use_ai": true
+  "code": "for i in range(n): for j in range(n): print(i+j)",
+  "language": "python"
 }
 
-### Test Health API
-GET http://localhost:5000/health
+
+
