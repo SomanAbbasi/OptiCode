@@ -1,12 +1,19 @@
 from core.parser import CodeParser
-
-parser = CodeParser()
-
+from core.ast_analyzer import ASTAnalyzer
 
 code = """
-for i in range(10):
-    print(i)
+def test():
+    for i in range(10):
+        for i in range(10):
+            print(i)
 """
 
-result = parser.parse(code)
-print(result)
+parser = CodeParser()
+parsed = parser.parse(code)
+
+if parsed["success"]:
+    analyzer = ASTAnalyzer()
+    result = analyzer.analyze(parsed["tree"])
+    print(result)
+else:
+    print(parsed["error"])
