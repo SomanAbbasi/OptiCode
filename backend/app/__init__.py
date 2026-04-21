@@ -5,13 +5,17 @@ from app.services.openrouter_service import callLLM
 from app.prompts.system_prompt import OPTICODE_SYSTEM_PROMPT
 from app.utils.validators import validate_analyze_request
 from app.routes.analyze import analyze_bp
-
+from app.utils.error_handlers import error_handlers
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
      # Register Blueprints 
     app.register_blueprint(analyze_bp)
+    
+    # Register global error object
+    
+    error_handlers(app)
     
     @app.route("/health", methods=["GET"])
     def health():

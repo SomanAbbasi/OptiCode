@@ -8,8 +8,8 @@ POST {{baseUrl}}/test-validator
 Content-Type: application/json
 
 {
-  "code": "for i in range(n): for j in range(n): print(i+j)",
-  "language": "python"
+  "code": "arr = [1,2,3] \nfor i in arr: for j in arr: if i<j: arr[i], arr[j] = arr[j], arr[i]",
+  "language": "python"int(i) 
 }
 
 ### Analyze: Model Response
@@ -21,3 +21,14 @@ Content-Type: application/json
   "language": "python"
 }
 
+### Analyze:Brute force 
+POST {{baseUrl}}/analyze
+Content-Type: application/json
+
+{
+  "code": "def find_pairs(arr, target):\n    n = len(arr)\n    result = []\n    for i in range(n):\n        for j in range(i + 1, n):\n            if arr[i] + arr[j] == target:\n                result.append((arr[i], arr[j]))\n    return result",
+  "language": "python"
+}
+
+### Error Validation
+GET http://127.0.0.1:5000/analyze
