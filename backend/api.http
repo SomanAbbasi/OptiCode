@@ -30,7 +30,7 @@ Content-Type: application/json
   "language": "python"
 }
 
-### Analyze:Brute force 
+### Analyze:Testing
 POST {{baseUrl}}/analyze
 Content-Type: application/json
 
