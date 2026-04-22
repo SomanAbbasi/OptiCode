@@ -30,5 +30,13 @@ Content-Type: application/json
   "language": "python"
 }
 
+### Analyze:Brute force 
+POST {{baseUrl}}/analyze
+Content-Type: application/json
+
+{
+  "code": "def find_pairs(arr, target):\n    n = len(arr)\n    result = []\n    for i in range(n):\n        for j in range(i + 1, n):\n            if arr[i] + arr[j] == target:\n                result.append((arr[i], arr[j]))\n    return result",
+  "language": "python"
+}
 ### Error Validation
 GET http://127.0.0.1:5000/analyze

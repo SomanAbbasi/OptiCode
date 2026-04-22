@@ -64,6 +64,7 @@ def callLLM(messages: list) -> str:
         print(f"[OpenRouter Failed] {e}")
 
     try:
+        print("Groq")
         return callGroq(messages)
     except Exception as e:
         print(f"[Groq Failed] {e}")

@@ -1,6 +1,7 @@
 
 from flask import Flask,request,jsonify
 from config import Config
+from flask_cors import CORS
 from app.services.openrouter_service import callLLM
 from app.prompts.system_prompt import OPTICODE_SYSTEM_PROMPT
 from app.utils.validators import validate_analyze_request
@@ -9,6 +10,16 @@ from app.utils.error_handlers import error_handlers
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    
+    
+    # CORS
+    CORS(app, resources={
+        r"/*": {
+            "origins": Config.CORS_ORIGINS,
+            "methods": ["GET", "POST", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
 
      # Register Blueprints 
     app.register_blueprint(analyze_bp)
