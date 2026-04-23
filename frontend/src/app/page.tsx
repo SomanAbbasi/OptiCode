@@ -1,38 +1,30 @@
-import Badge from "./components/ui/Badge";
-import Button from "./components/ui/Button";
-import Card from "./components/ui/Card";
+"use client";
+import { useState } from "react";
 
+import { Language } from "../../types/analysis";
+import EditorPanel from "./components/editor/EditorPanel";
 export default function Home() {
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  // test loading state
+  function handleAnalyze(code: string, language: Language) {
+    console.log("Analyzing:", { language, lines: code.split("\n").length });
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 2000);
+  }
+
+
   return (
-    <main className="min-h-screen bg-gray-50 p-10 space-y-6">
+    <main className="min-h-screen bg-gray-50 p-8">
 
-      {/* Button variants */}
-      <div className="flex gap-3">
-        <Button variant="primary">Analyze</Button>
-        <Button variant="secondary">Upload File</Button>
-        <Button variant="ghost">Clear</Button>
-        <Button variant="primary" loading>Analyzing...</Button>
+
+      <div className="max-w-2xl mx-auto">
+        <EditorPanel
+          onAnalyze={handleAnalyze}
+          isLoading={isLoading}
+        />
       </div>
-
-      {/* Badge variants */}
-      <div className="flex gap-2">
-        <Badge variant="high">High</Badge>
-        <Badge variant="medium">Medium</Badge>
-        <Badge variant="low">Low</Badge>
-        <Badge variant="success">Valid</Badge>
-        <Badge variant="indigo">O(n²)</Badge>
-      </div>
-
-      {/* Card with title and action */}
-      <Card
-        title="Summary Card"
-        headerAction={<Badge variant="success">Success</Badge>}
-      >
-        <p className="text-sm text-gray-500">
-          Card body content goes here.
-        </p>
-      </Card>
-
     </main>
   );
 }
