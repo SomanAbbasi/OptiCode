@@ -87,7 +87,7 @@ export type AnalyzerStatus =
 
 export interface AnalyzerState {
     status:AnalyzerStatus;
-    result:AnalysisResult;
+    result:AnalysisResult | null;
     error:string | null;
 
 }
