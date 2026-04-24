@@ -1,5 +1,15 @@
-
 import './globals.css';
+import { Manrope, JetBrains_Mono } from "next/font/google";
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+});
 
 export default function RootLayout({
   children,
@@ -8,7 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-gray-50 text-gray-900 antialiased">{children}</body>
+      <body
+        className={`${manrope.variable} ${jetbrainsMono.variable} bg-slate-50 text-slate-900 antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

@@ -41,23 +41,31 @@ export default function EditorPanel({
     <div className="flex flex-col gap-4 h-full">
 
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-800">
-          Code Analyzer
-        </h2>
+        <div>
+          <h2 className="text-lg font-semibold tracking-tight text-slate-900">
+            Code Analyzer
+          </h2>
+          <p className="text-xs text-slate-500">
+            Paste code or upload a file, then run optimization analysis.
+          </p>
+        </div>
 
         {code.trim() && (
           <button
             onClick={handleClear}
-            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-700"
+            type="button"
           >
+            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
             Clear
           </button>
         )}
       </div>
 
-      {/* Language selector && upload button row*/}
-      <div className="flex items-end gap-3">
-        <div className="w-36">
+      <div className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <div className="w-full sm:w-40">
           <LanguageSelector
             value={language}
             onChange={setLanguage}
@@ -89,6 +97,10 @@ export default function EditorPanel({
         {isLoading ? "Analyzing..." : "Analyze Code"}
       </Button>
 
+      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">
+        <span>Better results with complete functions or classes.</span>
+        <span className="hidden sm:block">Supports C++, C, Java, C#, Python</span>
+      </div>
     </div>
   );
 }

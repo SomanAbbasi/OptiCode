@@ -17,15 +17,15 @@ export default function Card({
   return (
     <div
       className={`
-        bg-white rounded-xl border border-gray-200
-        shadow-sm overflow-hidden
+        bg-white rounded-2xl border border-slate-200
+        shadow-[0_15px_30px_-30px_rgba(15,23,42,0.8)] overflow-hidden
         ${className}
       `}
     >
       {/* Render header only if title is provided */}
       {title && (
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-800">{title}</h3>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/60">
+          <h3 className="text-sm font-semibold tracking-tight text-slate-800">{title}</h3>
           {headerAction && (
             <div className="flex items-center gap-2">{headerAction}</div>
           )}

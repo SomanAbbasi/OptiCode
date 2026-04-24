@@ -14,17 +14,17 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50",
+    "bg-[linear-gradient(135deg,#1d4ed8,#1e40af)] text-white shadow-[0_12px_30px_-16px_rgba(30,64,175,0.9)] hover:brightness-105 disabled:opacity-60",
   secondary:
-    "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 disabled:opacity-50",
+    "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 disabled:opacity-60",
   ghost:
-    "bg-transparent text-gray-600 hover:bg-gray-100 disabled:opacity-50",
+    "bg-transparent text-slate-600 hover:bg-slate-100 disabled:opacity-60",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
   sm: "px-3 py-1.5 text-xs",
   md: "px-4 py-2 text-sm",
-  lg: "px-5 py-2.5 text-base",
+  lg: "px-5 py-3 text-base",
 };
 
 export default function Button({
@@ -41,8 +41,10 @@ export default function Button({
       disabled={disabled || loading}
       className={`
         inline-flex items-center justify-center gap-2
-        font-medium rounded-lg transition-colors duration-150
-        cursor-pointer select-none
+        font-semibold rounded-xl transition-all duration-200
+        cursor-pointer select-none focus-visible:outline-none
+        focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500
+        disabled:cursor-not-allowed
         ${variantStyles[variant]}
         ${sizeStyles[size]}
         ${className}

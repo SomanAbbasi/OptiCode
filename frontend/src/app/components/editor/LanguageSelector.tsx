@@ -22,7 +22,7 @@ export default function LanguageSelector({
 }: LanguageSelectorProps) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
         Language
       </label>
 
@@ -32,11 +32,11 @@ export default function LanguageSelector({
         onChange={(e) => onChange(e.target.value as Language)}
         className="
           w-full px-3 py-2 text-sm
-          bg-white border border-gray-200 rounded-lg
-          text-gray-800 font-medium
-          focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+          bg-white border border-slate-200 rounded-xl
+          text-slate-800 font-semibold
+          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
           disabled:opacity-50 disabled:cursor-not-allowed
-          cursor-pointer transition-colors
+          cursor-pointer transition-all
         "
       >
         {SUPPORTED_LANGUAGES.map((lang) => (

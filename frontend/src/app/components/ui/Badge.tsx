@@ -18,13 +18,13 @@ interface BadgeProps {
 
 // Each variant maps to a background + text color pair
 const variantStyles: Record<BadgeVariant, string> = {
-  default: "bg-gray-100 text-gray-600",
-  success: "bg-emerald-50 text-emerald-700",
-  error:   "bg-red-50 text-red-600",
-  high:    "bg-red-50 text-red-600",
-  medium:  "bg-amber-50 text-amber-600",
-  low:     "bg-blue-50 text-blue-600",
-  indigo:  "bg-indigo-50 text-indigo-600",
+  default: "bg-slate-100 text-slate-700",
+  success: "bg-emerald-100/70 text-emerald-800",
+  error:   "bg-rose-100/70 text-rose-800",
+  high:    "bg-rose-100/70 text-rose-800",
+  medium:  "bg-amber-100/80 text-amber-800",
+  low:     "bg-blue-100/80 text-blue-800",
+  indigo:  "bg-blue-100/80 text-blue-800",
 };
 
 export default function Badge({
@@ -36,8 +36,8 @@ export default function Badge({
     <span
       className={`
         inline-flex items-center gap-1
-        px-2 py-0.5 rounded-full
-        text-xs font-medium
+        px-2.5 py-0.5 rounded-full border border-white/70
+        text-xs font-semibold
         ${variantStyles[variant]}
         ${className}
       `}

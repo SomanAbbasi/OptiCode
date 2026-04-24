@@ -49,7 +49,7 @@ export default function FileUploader({
         size="md"
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
-        className="gap-2"
+        className="gap-2 rounded-xl"
       >
         {/* Upload icon */}
         <svg
@@ -65,7 +65,7 @@ export default function FileUploader({
             d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
           />
         </svg>
-        Upload File
+        Upload
       </Button>
 
       {/* Hidden file input — never visible to the user */}
