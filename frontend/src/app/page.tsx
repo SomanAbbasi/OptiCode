@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Language } from "../../types/analysis";
 import EditorPanel from "./components/editor/EditorPanel";
 import { useAnalyzer } from "@/hooks/useAnalyzer"; 
@@ -6,9 +7,19 @@ import SummaryCard from "./components/results/SummaryCard";
 import IssuesList from "./components/results/IssuesList";
 import OptimizationList from "./components/results/OptimizationList";
 import ExplanationPanel from "./components/results/ExplanationPanel";
+import OptimizedCode from "./components/results/OptimizedCode";
+
 
 export default function Home() {
   const { status, result, error, analyze } = useAnalyzer();
+
+  // Track selected language so OptimizedCode knows the file extension
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>("python");
+
+  function handleAnalyze(code: string, language: Language) {
+    setSelectedLanguage(language);
+    analyze(code, language);
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 p-8">
@@ -17,9 +28,7 @@ export default function Home() {
 
           {/* Left — Editor */}
           <EditorPanel
-            onAnalyze={(code: string, language: Language) =>
-              analyze(code, language)
-            }
+            onAnalyze={handleAnalyze}
             isLoading={status === "loading"}
           />
 
@@ -34,10 +43,10 @@ export default function Home() {
               </div>
             )}
 
-            {/* Loading skeleton */}
+            {/* Loading skeletons */}
             {status === "loading" && (
               <div className="space-y-4">
-                {[1, 2, 3, 4].map((i) => (
+                {[1, 2, 3, 4, 5].map((i) => (
                   <div
                     key={i}
                     className="bg-white rounded-xl border border-gray-200 p-4 animate-pulse"
@@ -50,7 +59,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* All four result components */}
+            {/* All five result components */}
             {status === "success" && result && (
               <>
                 <SummaryCard
@@ -72,6 +81,10 @@ export default function Home() {
                     result.optimized_code.description ??
                     ""
                   }
+                />
+                <OptimizedCode
+                  optimizedCode={result.optimized_code}
+                  language={selectedLanguage}
                 />
               </>
             )}
