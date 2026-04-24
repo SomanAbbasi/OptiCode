@@ -1,11 +1,18 @@
 
 "use client";
 
+import Button from "../ui/Button";
+
 interface CodeEditorProps {
   value: string;
   onChange: (code: string) => void;
   language: string;
   disabled?: boolean; // locked while analysis is running
+  onClear?: () => void;
+  showClearButton?: boolean;
+  onAnalyze?: () => void;
+  isAnalyzeDisabled?: boolean;
+  isAnalyzeLoading?: boolean;
 }
 
 export default function CodeEditor({
@@ -13,18 +20,50 @@ export default function CodeEditor({
   onChange,
   language,
   disabled = false,
+  onClear,
+  showClearButton = false,
+  onAnalyze,
+  isAnalyzeDisabled = false,
+  isAnalyzeLoading = false,
 }: CodeEditorProps) {
   const lines = value.split("\n");
   const lineCount = Math.max(lines.length, 20);
 
   return (
     <div className="flex flex-col gap-2 flex-1 min-h-0">
-      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-        Code Editor
-        <span className="ml-2 normal-case text-blue-600 font-semibold">
-          {language}
-        </span>
-      </label>
+      <div className="flex items-center justify-between gap-3">
+        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+          Code Editor
+          <span className="ml-2 normal-case text-blue-600 font-semibold">
+            {language}
+          </span>
+        </label>
+
+        <div className="flex items-center gap-2">
+          {showClearButton && (
+            <button
+              onClick={onClear}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-700"
+              type="button"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Clear
+            </button>
+          )}
+
+          <Button
+            variant="primary"
+            size="md"
+            loading={isAnalyzeLoading}
+            disabled={isAnalyzeDisabled}
+            onClick={onAnalyze}
+          >
+            {isAnalyzeLoading ? "Analyzing..." : "Analyze Code"}
+          </Button>
+        </div>
+      </div>
 
       <div className="
         flex flex-1 min-h-105

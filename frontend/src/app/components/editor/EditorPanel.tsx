@@ -5,7 +5,6 @@ import { Language } from "../../../../types/analysis";
 import LanguageSelector from "./LanguageSelector";
 import FileUploader from "./FileUploader";
 import CodeEditor from "./CodeEditot";
-import Button from "../ui/Button";
 
 interface EditorPanelProps {
   // Called when user clicks Analyze — passes code and language up
@@ -40,7 +39,7 @@ export default function EditorPanel({
   return (
     <div className="flex flex-col gap-4 h-full">
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-slate-900">
             Code Analyzer
@@ -49,19 +48,6 @@ export default function EditorPanel({
             Paste code or upload a file, then run optimization analysis.
           </p>
         </div>
-
-        {code.trim() && (
-          <button
-            onClick={handleClear}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-700"
-            type="button"
-          >
-            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            Clear
-          </button>
-        )}
       </div>
 
       <div className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
@@ -84,18 +70,12 @@ export default function EditorPanel({
         onChange={setCode}
         language={language}
         disabled={isLoading}
+        onClear={handleClear}
+        showClearButton={Boolean(code.trim())}
+        onAnalyze={handleAnalyze}
+        isAnalyzeDisabled={!code.trim() || isLoading}
+        isAnalyzeLoading={isLoading}
       />
-
-      <Button
-        variant="primary"
-        size="lg"
-        loading={isLoading}
-        disabled={!code.trim() || isLoading}
-        onClick={handleAnalyze}
-        className="w-full"
-      >
-        {isLoading ? "Analyzing..." : "Analyze Code"}
-      </Button>
 
       <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">
         <span>Better results with complete functions or classes.</span>
