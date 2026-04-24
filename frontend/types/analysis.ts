@@ -51,7 +51,8 @@ export interface Optimization {
 // Optimze code
 export interface OptimizedCode {
     code: string;
-    description: string;
+    description?: string;
+    notes?: string;
 }
 
 

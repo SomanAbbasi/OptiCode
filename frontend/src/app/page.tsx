@@ -1,50 +1,83 @@
 "use client";
-import { useState } from "react";
-
 import { Language } from "../../types/analysis";
 import EditorPanel from "./components/editor/EditorPanel";
-
 import { useAnalyzer } from "@/hooks/useAnalyzer"; 
+import SummaryCard from "./components/results/SummaryCard";
+import IssuesList from "./components/results/IssuesList";
+import OptimizationList from "./components/results/OptimizationList";
+import ExplanationPanel from "./components/results/ExplanationPanel";
 
 export default function Home() {
   const { status, result, error, analyze } = useAnalyzer();
 
-  function handleAnalyze(code: string, language: Language) {
-    analyze(code, language);
-  }
-
   return (
     <main className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
-        {/* Editor Panel */}
-        <EditorPanel
-          onAnalyze={handleAnalyze}
-          isLoading={status === "loading"}
-        />
+          {/* Left — Editor */}
+          <EditorPanel
+            onAnalyze={(code: string, language: Language) =>
+              analyze(code, language)
+            }
+            isLoading={status === "loading"}
+          />
 
-        {/* Status indicator */}
-        <div className="text-sm font-mono text-gray-500">
-          Status: <span className="text-indigo-600 font-semibold">{status}</span>
+          {/* Right — Results */}
+          <div className="space-y-4">
+
+            {/* Error state */}
+            {status === "error" && error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                <p className="text-sm font-medium text-red-600">Error</p>
+                <p className="text-sm text-red-500 mt-1">{error}</p>
+              </div>
+            )}
+
+            {/* Loading skeleton */}
+            {status === "loading" && (
+              <div className="space-y-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-white rounded-xl border border-gray-200 p-4 animate-pulse"
+                  >
+                    <div className="h-4 bg-gray-100 rounded w-1/3 mb-4" />
+                    <div className="h-3 bg-gray-100 rounded w-full mb-2" />
+                    <div className="h-3 bg-gray-100 rounded w-2/3" />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* All four result components */}
+            {status === "success" && result && (
+              <>
+                <SummaryCard
+                  analysis={result.analysis}
+                  syntaxCheck={result.syntax_check}
+                />
+                <IssuesList
+                  issues={result.issues}
+                />
+                <OptimizationList
+                  optimizations={result.optimizations}
+                />
+                <ExplanationPanel
+                  analysis={result.analysis}
+                  issues={result.issues}
+                  optimizations={result.optimizations}
+                  optimizedNotes={
+                    result.optimized_code.notes ??
+                    result.optimized_code.description ??
+                    ""
+                  }
+                />
+              </>
+            )}
+
+          </div>
         </div>
-
-        {/* Error message */}
-        {status === "error" && error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-sm text-red-600 font-medium">Error</p>
-            <p className="text-sm text-red-500 mt-1">{error}</p>
-          </div>
-        )}
-
-        {/* Raw JSON result — proof the full flow works */}
-        {status === "success" && result && (
-          <div className="bg-gray-950 rounded-xl p-4 overflow-auto max-h-96">
-            <pre className="text-xs text-gray-100 font-mono">
-              {JSON.stringify(result, null, 2)}
-            </pre>
-          </div>
-        )}
-
       </div>
     </main>
   );
