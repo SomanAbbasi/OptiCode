@@ -4,6 +4,18 @@ import { AnalyzeRequest,AnalysisResult } from "../../types/analysis";
 const LOCAL_API_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
 const LIVE_API_URL = process.env.NEXT_PUBLIC_LIVE_API_URL;
 
+function isLocalHost(): boolean {
+  if (typeof window === "undefined") return false;
+  const host = window.location.hostname;
+  return host === "localhost" || host === "127.0.0.1";
+}
+
+function backendUnavailableMessage(): string {
+  return isLocalHost()
+    ? "Cannot reach the backend. Make sure your Flask server is running."
+    : "Analysis service is temporarily unavailable. Please try again in a few moments.";
+}
+
 function resolveApiUrl(): string {
   const configuredUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -24,7 +36,9 @@ function resolveApiUrl(): string {
   }
 
   throw new Error(
-    "Backend URL is not configured. Set NEXT_PUBLIC_API_URL or both NEXT_PUBLIC_LOCAL_API_URL and NEXT_PUBLIC_LIVE_API_URL."
+    isLocalHost()
+      ? "Backend URL is not configured. Set NEXT_PUBLIC_API_URL or both NEXT_PUBLIC_LOCAL_API_URL and NEXT_PUBLIC_LIVE_API_URL."
+      : "Analysis service is currently unavailable. Please try again later."
   );
 }
 
@@ -44,21 +58,36 @@ export async function analyzeCode(
       body: JSON.stringify(payload),
     });
   } catch {
-    throw new Error(
-      "Cannot reach the backend. Make sure your Flask server is running."
-    );
+    throw new Error(backendUnavailableMessage());
   }
 
-  const data = await response.json();
+  let data: unknown = null;
+  const contentType = response.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    data = await response.json();
+  } else {
+    const text = await response.text();
+    data = text ? { message: text } : {};
+  }
+
+  const parsed = (data && typeof data === "object" ? data : {}) as {
+    errors?: string[];
+    message?: string;
+  };
 
   if (response.status === 400) {
-    const messages: string[] = data.errors ?? ["Invalid request."];
+    const messages: string[] = parsed.errors ?? ["Invalid request."];
     throw new Error(messages.join(" "));
   }
 
   if (!response.ok) {
+    if (response.status >= 500) {
+      throw new Error(backendUnavailableMessage());
+    }
+
     throw new Error(
-      data.message ?? `Backend error: ${response.status}`
+      parsed.message ?? "We could not process your request. Please try again."
     );
   }
 
