@@ -66,20 +66,20 @@ export default function CodeEditor({
       </div>
 
       <div className="
-        flex flex-1 min-h-105
+        flex h-145 sm:h-160 min-h-0
         bg-[#071024] rounded-2xl border border-slate-900/70
         overflow-hidden font-mono text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]
       ">
 
-        <div className="flex-1 overflow-auto">
-          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-700/80 bg-slate-900/90 px-3 py-2 text-[11px] text-slate-300 backdrop-blur">
+        <div className="flex flex-1 min-h-0 flex-col">
+          <div className="flex items-center justify-between border-b border-slate-700/80 bg-slate-900/90 px-3 py-2 text-[11px] text-slate-300 backdrop-blur">
             <span className="font-semibold tracking-wide uppercase">Source</span>
             <span className="text-slate-400">{lines.length} lines</span>
           </div>
 
-          <div className="flex min-h-95">
+          <div className="flex flex-1 min-h-0">
             <div className="
-              select-none py-4 px-3
+              select-none py-4 px-3 overflow-hidden
               text-right text-slate-500
               border-r border-slate-800/80
               min-w-14 bg-slate-950/40
@@ -96,11 +96,12 @@ export default function CodeEditor({
               onChange={(e) => onChange(e.target.value)}
               disabled={disabled}
               spellCheck={false}
+              wrap="off"
               placeholder={`Paste your ${language} code here...`}
               className="
-                flex-1 min-h-95 px-4 py-4
+                flex-1 h-full px-4 py-4
                 bg-transparent text-slate-100
-                leading-6 resize-none
+                leading-6 resize-none overflow-auto
                 focus:outline-none
                 placeholder:text-slate-500
                 disabled:opacity-50 disabled:cursor-not-allowed
