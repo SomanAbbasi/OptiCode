@@ -7,6 +7,18 @@ from app.prompts.system_prompt import OPTICODE_SYSTEM_PROMPT
 from app.utils.validators import validate_analyze_request
 from app.routes.analyze import analyze_bp
 from app.utils.error_handlers import error_handlers
+
+
+def _is_origin_allowed(request_origin: str) -> bool:
+    allowed = Config.CORS_ORIGINS
+
+    if allowed == "*":
+        return True
+
+    normalized_request = request_origin.rstrip("/")
+    return normalized_request in allowed
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -17,9 +29,33 @@ def create_app():
         r"/*": {
             "origins": Config.CORS_ORIGINS,
             "methods": ["GET", "POST", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"]
+            "allow_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": False,
+            "send_wildcard": Config.CORS_ORIGINS == "*",
+            "max_age": 86400,
         }
     })
+
+    @app.after_request
+    def apply_cors_fallback(response):
+        origin = request.headers.get("Origin")
+        if not origin:
+            return response
+
+        if not _is_origin_allowed(origin):
+            return response
+
+        if Config.CORS_ORIGINS == "*":
+            response.headers["Access-Control-Allow-Origin"] = "*"
+        else:
+            response.headers["Access-Control-Allow-Origin"] = origin.rstrip("/")
+            response.headers["Vary"] = "Origin"
+
+        response.headers.setdefault("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        response.headers.setdefault("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.setdefault("Access-Control-Max-Age", "86400")
+
+        return response
 
      # Register Blueprints 
     app.register_blueprint(analyze_bp)

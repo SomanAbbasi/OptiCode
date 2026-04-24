@@ -1,7 +1,30 @@
 import os
+from typing import List, Union
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
+def _normalize_origin(origin: str) -> str:
+    return origin.strip().strip('"').strip("'").rstrip("/")
+
+
+def _parse_cors_origins() -> Union[str, List[str]]:
+    """Parse CORS origins from env, supporting common formats."""
+    raw = os.getenv("CORS_ORIGINS") or os.getenv("CORS_ORIGIN") or "*"
+    raw = raw.strip()
+
+    if raw == "*":
+        return "*"
+
+    # Support JSON-ish arrays without adding a JSON dependency path.
+    if raw.startswith("[") and raw.endswith("]"):
+        raw = raw[1:-1]
+
+    origins = [_normalize_origin(item) for item in raw.split(",")]
+    origins = [item for item in origins if item]
+
+    return origins or "*"
 
 class Config:
     FLASK_ENV = os.getenv("FLASK_ENV", "production")
@@ -10,4 +33,4 @@ class Config:
     OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "openrouter/auto")
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     GROQ_MODEL = os.getenv("GROQ_MODEL", "mixtral-8x7b-32768")
-    CORS_ORIGINS       = os.getenv("CORS_ORIGINS", "*")
+    CORS_ORIGINS       = _parse_cors_origins()
