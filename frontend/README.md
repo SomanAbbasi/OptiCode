@@ -2,6 +2,26 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+## Environment Setup
+
+Keep backend URLs in local env files and do not hardcode them in source files.
+
+1. Copy `.env.example` to `.env.local`.
+2. Fill your real values:
+
+```bash
+NEXT_PUBLIC_LOCAL_API_URL=http://127.0.0.1:5000
+NEXT_PUBLIC_LIVE_API_URL=https://your-render-backend.onrender.com
+```
+
+Optional single override:
+
+```bash
+NEXT_PUBLIC_API_URL=https://one-backend-for-all-environments
+```
+
+`.env.local` is ignored by git, so secrets and internal URLs do not get pushed.
+
 First, run the development server:
 
 ```bash
