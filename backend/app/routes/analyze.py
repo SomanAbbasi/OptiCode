@@ -4,9 +4,23 @@ from app.utils.validators import validate_analyze_request
 from app.utils.response_validator import validate_response
 from app.services.openrouter_service import callLLM
 from app.prompts.system_prompt import OPTICODE_SYSTEM_PROMPT
+from app.security.prompt_guard import detect_prompt_injection, build_user_message
 import json
 
 analyze_bp = Blueprint("analyze", __name__)
+
+
+def _parse_model_json(raw_response: str):
+    cleaned = (raw_response or "").strip()
+
+    # Strip accidental markdown fences if model disobeys
+    if cleaned.startswith("```"):
+        cleaned = cleaned.split("```")[1]
+        if cleaned.startswith("json"):
+            cleaned = cleaned[4:]
+        cleaned = cleaned.strip()
+
+    return json.loads(cleaned)
 
 @analyze_bp.route("/analyze", methods=["POST"])
 def analyze():
@@ -29,17 +43,11 @@ def analyze():
     code = data["code"].strip()
     language = data["language"].strip()
 
-    #  Build message payload for the model
-    user_message = f"""
-Analyze the following {language} code and return ONLY a valid JSON response.
-No markdown. No explanation outside the JSON.
+    #  Prompt injection scan
+    security_scan = detect_prompt_injection(code)
+    hardened_mode = security_scan["risk_level"] in ["medium", "high"]
 
-INPUT:
-{{
-  "code": {json.dumps(code)},
-  "language": "{language}"
-}}
-"""
+    user_message = build_user_message(language, code, hardened=hardened_mode)
 
     messages = [
         {"role": "system", "content": OPTICODE_SYSTEM_PROMPT},
@@ -57,27 +65,37 @@ INPUT:
         }), 502
 
     #  Parse model response as JSON 
+    retried = False
     try:
-        cleaned = raw_response.strip()
-
-        # Strip accidental markdown fences if model disobeys
-        if cleaned.startswith("```"):
-            cleaned = cleaned.split("```")[1]
-            if cleaned.startswith("json"):
-                cleaned = cleaned[4:]
-            cleaned = cleaned.strip()
-
-        parsed = json.loads(cleaned)
+        parsed = _parse_model_json(raw_response)
     except json.JSONDecodeError:
-        return jsonify({
-            "status": "error",
-            "source": "parsing",
-            "message": "Model returned a non-JSON response.",
-            "raw": raw_response
-        }), 500
+        # Retry once with explicit hardened mode if first parse failed
+        retried = True
+        hardened_mode = True
+        retry_user_message = build_user_message(language, code, hardened=True)
+        retry_messages = [
+            {"role": "system", "content": OPTICODE_SYSTEM_PROMPT},
+            {"role": "user", "content": retry_user_message},
+        ]
+
+        try:
+            retry_raw = callLLM(retry_messages)
+            parsed = _parse_model_json(retry_raw)
+        except Exception:
+            return jsonify({
+                "status": "error",
+                "source": "parsing",
+                "message": "Model returned an invalid response format."
+            }), 500
 
     # Validate and normalize the response 
     result = validate_response(parsed)
+
+    result["security"] = {
+        "prompt_injection": security_scan,
+        "mode": "hardened" if hardened_mode else "standard",
+        "retry_used": retried,
+    }
 
     #  Return guaranteed structured result 
     return jsonify(result), 200
