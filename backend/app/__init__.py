@@ -36,6 +36,18 @@ def create_app():
         }
     })
 
+    @app.before_request
+    def reject_disallowed_origin():
+        origin = request.headers.get("Origin")
+
+        if not origin or _is_origin_allowed(origin):
+            return None
+
+        return jsonify({
+            "status": "error",
+            "message": "Origin not allowed.",
+        }), 403
+
     @app.after_request
     def apply_cors_fallback(response):
         origin = request.headers.get("Origin")

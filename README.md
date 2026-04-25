@@ -54,6 +54,7 @@ OPENROUTER_MODEL=openai/auto
 GROQ_API_KEY=your_key_here
 GROQ_MODEL=llama-3.1-70b-versatile
 FLASK_DEBUG=1
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,https://codeenhancer.vercel.app
 ```
 
 Run the server:
