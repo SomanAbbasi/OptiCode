@@ -44,7 +44,7 @@ export async function analyzeCode(
 
   if (!response.ok) {
     if (response.status >= 500) {
-      throw new Error(backendUnavailableMessage());
+      throw new Error(parsed.message ?? backendUnavailableMessage());
     }
 
     throw new Error(
