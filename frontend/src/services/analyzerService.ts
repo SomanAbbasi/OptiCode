@@ -1,56 +1,17 @@
 
-import { AnalyzeRequest,AnalysisResult } from "../../types/analysis";
-
-const LOCAL_API_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
-const LIVE_API_URL = process.env.NEXT_PUBLIC_LIVE_API_URL;
-
-function isLocalHost(): boolean {
-  if (typeof window === "undefined") return false;
-  const host = window.location.hostname;
-  return host === "localhost" || host === "127.0.0.1";
-}
+import { AnalyzeRequest, AnalysisResult } from "../../types/analysis";
 
 function backendUnavailableMessage(): string {
-  return isLocalHost()
-    ? "Cannot reach the backend. Make sure your Flask server is running."
-    : "Analysis service is temporarily unavailable. Please try again in a few moments.";
-}
-
-function resolveApiUrl(): string {
-  const configuredUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  // If user configured an explicit URL, always respect it.
-  if (configuredUrl && configuredUrl.trim()) {
-    return configuredUrl.trim();
-  }
-
-  // Browser-side auto switching based on current host.
-  if (typeof window !== "undefined") {
-    const host = window.location.hostname;
-    const isLocalHost = host === "localhost" || host === "127.0.0.1";
-
-    const selectedUrl = isLocalHost ? LOCAL_API_URL : LIVE_API_URL;
-    if (selectedUrl && selectedUrl.trim()) {
-      return selectedUrl.trim();
-    }
-  }
-
-  throw new Error(
-    isLocalHost()
-      ? "Backend URL is not configured. Set NEXT_PUBLIC_API_URL or both NEXT_PUBLIC_LOCAL_API_URL and NEXT_PUBLIC_LIVE_API_URL."
-      : "Analysis service is currently unavailable. Please try again later."
-  );
+  return "Analysis service is temporarily unavailable. Please try again in a few moments.";
 }
 
 export async function analyzeCode(
   payload: AnalyzeRequest
 ): Promise<AnalysisResult> {
-  const apiUrl = resolveApiUrl();
-
   let response: Response;
 
   try {
-    response = await fetch(`${apiUrl}/analyze`, {
+    response = await fetch("/api/analyze", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
