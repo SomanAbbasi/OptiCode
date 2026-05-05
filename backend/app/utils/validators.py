@@ -1,4 +1,6 @@
 
+from config import Config
+
 SUPPORTED_LANGUAGES = ["python", "c++", "c", "java", "c#"]
 
 def validate_analyze_request(data: dict) -> dict:
@@ -15,6 +17,10 @@ def validate_analyze_request(data: dict) -> dict:
 
     elif not isinstance(data["code"], str) or not data["code"].strip():
         errors.append("Field 'code' must be a non-empty string.")
+    else:
+        code_bytes = len(data["code"].encode("utf-8"))
+        if code_bytes > Config.MAX_CODE_BYTES:
+            errors.append("Field 'code' exceeds the maximum allowed size.")
 
     if "language" not in data:
         errors.append("Missing required field: 'language'.")

@@ -51,6 +51,15 @@ def error_handlers(app):
             "message": "Request was well-formed but contained semantic errors."
         }), 422
 
+    #  413 Payload Too Large
+    @app.errorhandler(413)
+    def payload_too_large(e):
+        return jsonify({
+            "status": "error",
+            "code": 413,
+            "message": "Request payload is too large."
+        }), 413
+
     #  429 Too Many Requests 
     @app.errorhandler(429)
     def too_many_requests(e):
@@ -75,5 +84,5 @@ def error_handlers(app):
         return jsonify({
             "status": "error",
             "code": 500,
-            "message": f"Unexpected error: {str(e)}"
-        }),
+            "message": "An internal server error occurred. Please try again later."
+        }), 500

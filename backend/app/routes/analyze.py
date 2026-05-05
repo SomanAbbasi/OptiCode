@@ -1,5 +1,5 @@
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from app.utils.validators import validate_analyze_request
 from app.utils.response_validator import validate_response
 from app.services.openrouter_service import callLLM
@@ -58,10 +58,11 @@ def analyze():
     try:
         raw_response = callLLM(messages)
     except Exception as e:
+        current_app.logger.exception("LLM request failed: %s", e)
         return jsonify({
             "status": "error",
             "source": "openrouter",
-            "message": str(e)
+            "message": "Analysis service is temporarily unavailable."
         }), 502
 
     #  Parse model response as JSON 
@@ -81,7 +82,8 @@ def analyze():
         try:
             retry_raw = callLLM(retry_messages)
             parsed = _parse_model_json(retry_raw)
-        except Exception:
+        except Exception as e:
+            current_app.logger.exception("LLM retry failed: %s", e)
             return jsonify({
                 "status": "error",
                 "source": "parsing",
