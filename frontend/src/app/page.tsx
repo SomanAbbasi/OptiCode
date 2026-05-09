@@ -127,8 +127,7 @@ export default function Home() {
 
       <footer className="border-t border-slate-200 bg-white/90 px-4 py-4 text-center text-xs text-slate-500 sm:px-6">
         <p>
-          Built by Soman Abbasi ·
-          © 2026{" "}
+          © 2026 {" "}
           <a
             href="https://www.somanabbasi.tech/"
             target="_blank"
